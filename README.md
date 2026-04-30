@@ -9,8 +9,7 @@ If you are adding Manifest to your own React app, you only need to copy the two 
 ## What this app shows
 
 - `/` — Home page. Loads the main widget with `pageType: "HOME"`.
-- `/product` — Product page (2 X Shampoo). Loads the main widget with `pageType: "PRODUCT"` and the product's data, and also renders the AI Product Specialist inline below the product details.
-- `/product-2` — Same as above for a second product (3-6-9 Omega for Hair).
+- `/product/:handle` — Product page. One parametric route serves any product registered in `src/products.js`. Loads the main widget with `pageType: "PRODUCT"` and the product's data, and renders the AI Product Specialist inline below the product details.
 
 When you click between pages, the widget updates its context. There is no full page reload; React Router handles navigation client-side.
 
@@ -76,14 +75,16 @@ export default function ManifestWidget({ context }) {
 
 The component is mounted once at the **layout level**, not inside individual pages — see [src/App.jsx](src/App.jsx). The widget mutates global DOM (it appends `#bik-chat-root` to `document.body`), so unmounting it during route changes causes layout breakage. Keep it mounted; pass the new `context` as the route changes.
 
-The `context` value in this demo comes from each page module. For example [src/pages/ProductPage.jsx](src/pages/ProductPage.jsx) exports a `productContext`, and the layout picks the right one based on `useLocation()`:
+The `context` value comes from a small registry. Home is a single static context in [src/pages/HomePage.jsx](src/pages/HomePage.jsx); product contexts live in [src/products.js](src/products.js) keyed by URL handle. The layout looks up the right one from the current path:
 
 ```jsx
+import { products } from './products.js';
+
 function Shell() {
   const location = useLocation();
   const context = useMemo(() => {
-    if (location.pathname === '/product') return productContext;
-    if (location.pathname === '/product-2') return product2Context;
+    const match = location.pathname.match(/^\/product\/(.+)$/);
+    if (match) return products[match[1]]?.context ?? homeContext;
     return homeContext;
   }, [location.pathname]);
 
@@ -95,6 +96,8 @@ function Shell() {
   );
 }
 ```
+
+Adding a new product is one entry in `src/products.js` — no changes to `App.jsx` or routing needed.
 
 ### 2. AI Product Specialist embed (`aiProductSpecialistBundle.js`)
 
@@ -251,11 +254,12 @@ Shopify convention: `1999` means `$19.99`. Don't divide by 100 yourself; Manifes
 src/
   App.jsx                              # router shell + the always-mounted widget
   ManifestWidget.jsx                   # main chat widget loader (bundle.js)
+  config.js                            # shared shopContext
+  products.js                          # product registry (one entry per product)
   main.jsx
   components/
     AiProductSpecialistEmbed.jsx       # standalone product specialist embed
   pages/
     HomePage.jsx                       # exports homeContext + page UI
-    ProductPage.jsx                    # exports productContext + page UI + embed
-    Product2Page.jsx                   # exports product2Context + page UI + embed
+    ProductPage.jsx                    # parametric — reads :handle and renders from products.js
 ```

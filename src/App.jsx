@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation } from 're
 import { useMemo } from 'react';
 import ManifestWidget from './ManifestWidget.jsx';
 import HomePage, { homeContext } from './pages/HomePage.jsx';
-import ProductPage, { productContext } from './pages/ProductPage.jsx';
-import Product2Page, { product2Context } from './pages/Product2Page.jsx';
+import ProductPage from './pages/ProductPage.jsx';
+import { products } from './products.js';
 
 const linkStyle = ({ isActive }) => ({
   marginRight: 16,
@@ -14,8 +14,8 @@ const linkStyle = ({ isActive }) => ({
 function Shell() {
   const location = useLocation();
   const context = useMemo(() => {
-    if (location.pathname === '/product') return productContext;
-    if (location.pathname === '/product-2') return product2Context;
+    const match = location.pathname.match(/^\/product\/(.+)$/);
+    if (match) return products[match[1]]?.context ?? homeContext;
     return homeContext;
   }, [location.pathname]);
 
@@ -25,15 +25,17 @@ function Shell() {
         <h1 style={{ margin: '0 0 12px' }}>Manifest Demo</h1>
         <nav>
           <NavLink to="/" style={linkStyle} end>Home</NavLink>
-          <NavLink to="/product" style={linkStyle}>Product 1</NavLink>
-          <NavLink to="/product-2" style={linkStyle}>Product 2</NavLink>
+          {Object.entries(products).map(([handle, p]) => (
+            <NavLink key={handle} to={`/product/${handle}`} style={linkStyle}>
+              {p.context.productData.title}
+            </NavLink>
+          ))}
         </nav>
       </header>
       <main style={{ padding: 16 }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/product" element={<ProductPage />} />
-          <Route path="/product-2" element={<Product2Page />} />
+          <Route path="/product/:handle" element={<ProductPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

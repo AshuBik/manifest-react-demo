@@ -1,36 +1,13 @@
+import { useParams, Navigate } from 'react-router-dom';
+import { products } from '../products.js';
 import AiProductSpecialistEmbed from '../components/AiProductSpecialistEmbed.jsx';
-import { shopContext } from '../config.js';
-
-export const productContext = {
-  pageType: 'PRODUCT',
-  cacheBuster: Date.now(),
-  shopContext,
-  productData: {
-    id: 8373402960188,
-    handle: '2-x-shampoo',
-    title: '2 X Shampoo 123',
-    featured_image: 'https://picsum.photos/seed/shampoo/400/400',
-    price: 100,
-    variants: [
-      { id: 45820473835836, available: true, title: 'Small / Blue' },
-      { id: 45821333569852, available: true, title: 'Small / Green' },
-      { id: 45820473868604, available: true, title: 'Medium / Blue' },
-      { id: 45821333602620, available: true, title: 'Medium / Green' },
-      { id: 45820473901372, available: true, title: 'Large / Blue' },
-      { id: 45821333635388, available: true, title: 'Large / Green' },
-    ],
-  },
-};
-
-const specialistSettings = {
-  shouldShowHeader: true,
-  inputHeaderText: 'Ask about 2 X Shampoo 123',
-  showRecommendedQuestions: true,
-  brandColour: '#7031da',
-};
 
 export default function ProductPage() {
-  const { id, title, featured_image, price } = productContext.productData;
+  const { handle } = useParams();
+  const product = products[handle];
+  if (!product) return <Navigate to="/" replace />;
+
+  const { id, title, featured_image, price } = product.context.productData;
   return (
     <section>
       <h2>{title}</h2>
@@ -40,7 +17,7 @@ export default function ProductPage() {
 
       <section style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid #eee' }}>
         <h3 style={{ margin: '0 0 8px' }}>AI Product Specialist</h3>
-        <AiProductSpecialistEmbed productId={id} settings={specialistSettings} />
+        <AiProductSpecialistEmbed productId={id} settings={product.specialistSettings} />
       </section>
     </section>
   );
