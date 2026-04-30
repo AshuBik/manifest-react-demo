@@ -245,17 +245,6 @@ Shopify convention: `1999` means `$19.99`. Don't divide by 100 yourself; Manifes
 
 ---
 
-## Bundle URLs
-
-Two bundle URLs are available; pick one and stay with it:
-
-- `https://cdn.bikinfo.co/manifest/<file>` — recommended, served via CDN.
-- `https://storage.googleapis.com/bik-assets/manifest/<file>` — direct origin, also fine.
-
-Both are cached for up to one hour by browsers. After a Manifest release, returning users will pick up the new bundle on their next cache miss (typically within an hour).
-
----
-
 ## Project layout
 
 ```
