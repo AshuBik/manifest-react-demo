@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 const SCRIPT_SRC = 'https://cdn.bikinfo.co/manifest/aiProductSpecialistBundle.js';
 const CONTAINER_ID = 'manifest-ai-product-specialist';
 
-export default function AiProductSpecialistEmbed({ productId, settings }) {
+export default function AiProductSpecialistEmbed({ productId, pageType, settings }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -14,7 +14,8 @@ export default function AiProductSpecialistEmbed({ productId, settings }) {
       if (!window.aiProductSpecialist?.init) return;
       window.aiProductSpecialist.init({
         containerId: CONTAINER_ID,
-        productData: { id: productId },
+        pageType: pageType ?? (productId ? 'PRODUCT' : 'HOME'),
+        ...(productId ? { productData: { id: productId } } : {}),
         ...(settings ? { aiProductSpecialistSettings: settings } : {}),
       });
       window.aiProductSpecialist.start();
@@ -42,7 +43,7 @@ export default function AiProductSpecialistEmbed({ productId, settings }) {
         window.aiProductSpecialist.stop();
       }
     };
-  }, [productId, settings]);
+  }, [productId, pageType, settings]);
 
   return <div id={CONTAINER_ID} ref={containerRef} />;
 }

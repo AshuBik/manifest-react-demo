@@ -1,56 +1,56 @@
 import { shopContext } from './config.js';
 
 export const products = {
-  'lorem-ipsum': {
+  'red-cape': {
     context: {
       pageType: 'PRODUCT',
       cacheBuster: Date.now(),
       shopContext,
       productData: {
-        id: '1001',
-        handle: 'lorem-ipsum',
-        title: 'Lorem Ipsum',
-        featured_image: 'https://picsum.photos/seed/lorem/400/400',
-        price: 1999,
+        id: '1969',
+        handle: 'red-cape',
+        title: 'Red Cape',
+        featured_image: 'https://images.kiwico.com/products/1969/3502-500w.jpg',
+        price: 100,
         variants: [
-          { id: 1101, available: true, title: 'Small / Sit Amet' },
-          { id: 1102, available: true, title: 'Small / Consectetur' },
-          { id: 1103, available: true, title: 'Medium / Sit Amet' },
-          { id: 1104, available: true, title: 'Medium / Consectetur' },
-          { id: 1105, available: true, title: 'Large / Sit Amet' },
-          { id: 1106, available: true, title: 'Large / Consectetur' },
+          { id: 45820473835836, available: true, title: 'Small / Blue' },
+          { id: 45821333569852, available: true, title: 'Small / Green' },
+          { id: 45820473868604, available: true, title: 'Medium / Blue' },
+          { id: 45821333602620, available: true, title: 'Medium / Green' },
+          { id: 45820473901372, available: true, title: 'Large / Blue' },
+          { id: 45821333635388, available: true, title: 'Large / Green' },
         ],
       },
     },
     specialistSettings: {
       shouldShowHeader: true,
-      inputHeaderText: 'Ask about Lorem Ipsum',
+      inputHeaderText: 'Ask about Red Cape',
       showRecommendedQuestions: true,
       brandColour: '#7031da',
     },
   },
-  'dolor-sit-amet': {
+  'fire-lab': {
     context: {
       pageType: 'PRODUCT',
       cacheBuster: Date.now(),
       shopContext,
       productData: {
-        id: '1002',
-        handle: 'dolor-sit-amet',
-        title: 'Dolor Sit Amet',
-        featured_image: 'https://picsum.photos/seed/dolor/400/400',
-        price: 4999,
+        id: 2164,
+        handle: 'fire-lab',
+        title: 'Fire Lab',
+        featured_image: 'https://images.kiwico.com/products/2164/3744-500w.jpg',
+        price: 89900,
         variants: [
-          { id: 1201, available: true, title: 'Adipiscing / Elit' },
-          { id: 1202, available: false, title: 'Adipiscing / Tempor' },
-          { id: 1203, available: true, title: 'Incididunt / Elit' },
-          { id: 1204, available: false, title: 'Incididunt / Tempor' },
+          { id: 45821456023868, available: false, title: 'Vintage / Pink' },
+          { id: 45821477290300, available: false, title: 'Vintage / Red' },
+          { id: 45821456056636, available: false, title: 'Classic / Pink' },
+          { id: 45821477323068, available: false, title: 'Classic / Red' },
         ],
       },
     },
     specialistSettings: {
       shouldShowHeader: true,
-      inputHeaderText: 'Ask about Dolor Sit Amet',
+      inputHeaderText: 'Ask about Fire Lab',
       showRecommendedQuestions: true,
       brandColour: '#7031da',
     },

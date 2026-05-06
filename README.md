@@ -11,6 +11,8 @@ If you are adding Manifest to your own React app, you only need to copy the two 
 - `/` — Home page. Loads the main widget with `pageType: "HOME"`.
 - `/product/:handle` — Product page. One parametric route serves any product registered in `src/products.js`. Loads the main widget with `pageType: "PRODUCT"` and the product's data, and renders the AI Product Specialist inline below the product details.
 
+The home page also renders the AI Product Specialist embed inline, this time without a `productId` and with `pageType="HOME"` — useful for showing how the same component is reused across page types.
+
 When you click between pages, the widget updates its context. There is no full page reload; React Router handles navigation client-side.
 
 ---
@@ -101,7 +103,9 @@ Adding a new product is one entry in `src/products.js` — no changes to `App.js
 
 ### 2. AI Product Specialist embed (`aiProductSpecialistBundle.js`)
 
-The Product Specialist is a different bundle that mounts into a div *you control* on a product page. It is not global. You give it a container id, a product id, and optional settings; it renders inline.
+The Product Specialist is a different bundle that mounts into a div *you control*. It is not global. You give it a container id and optional settings; it renders inline.
+
+It works on any page type. Pass a `productId` for product pages; omit it on home or other pages and pass `pageType="HOME"` instead.
 
 The relevant file is [src/components/AiProductSpecialistEmbed.jsx](src/components/AiProductSpecialistEmbed.jsx):
 
@@ -111,7 +115,7 @@ import { useEffect, useRef } from 'react';
 const SCRIPT_SRC = 'https://cdn.bikinfo.co/manifest/aiProductSpecialistBundle.js';
 const CONTAINER_ID = 'manifest-ai-product-specialist';
 
-export default function AiProductSpecialistEmbed({ productId, settings }) {
+export default function AiProductSpecialistEmbed({ productId, pageType, settings }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -121,7 +125,8 @@ export default function AiProductSpecialistEmbed({ productId, settings }) {
       if (cancelled || !window.aiProductSpecialist?.init) return;
       window.aiProductSpecialist.init({
         containerId: CONTAINER_ID,
-        productData: { id: productId },
+        pageType: pageType ?? (productId ? 'PRODUCT' : 'HOME'),
+        ...(productId ? { productData: { id: productId } } : {}),
         ...(settings ? { aiProductSpecialistSettings: settings } : {}),
       });
       window.aiProductSpecialist.start();
@@ -146,13 +151,13 @@ export default function AiProductSpecialistEmbed({ productId, settings }) {
       cancelled = true;
       window.aiProductSpecialist?.stop?.();
     };
-  }, [productId, settings]);
+  }, [productId, pageType, settings]);
 
   return <div id={CONTAINER_ID} ref={containerRef} />;
 }
 ```
 
-Use it inside a product page like this (from [src/pages/ProductPage.jsx](src/pages/ProductPage.jsx)):
+On a product page (from [src/pages/ProductPage.jsx](src/pages/ProductPage.jsx)):
 
 ```jsx
 <AiProductSpecialistEmbed
@@ -166,7 +171,21 @@ Use it inside a product page like this (from [src/pages/ProductPage.jsx](src/pag
 />
 ```
 
-When the user navigates away from the product page, React unmounts the component and the cleanup function calls `window.aiProductSpecialist.stop()` to tear down the embed cleanly.
+On the home page (from [src/pages/HomePage.jsx](src/pages/HomePage.jsx)):
+
+```jsx
+<AiProductSpecialistEmbed
+  pageType="HOME"
+  settings={{
+    shouldShowHeader: true,
+    inputHeaderText: 'Ask anything about the store',
+    showRecommendedQuestions: true,
+    brandColour: '#7031da',
+  }}
+/>
+```
+
+When the user navigates away, React unmounts the component and the cleanup function calls `window.aiProductSpecialist.stop()` to tear down the embed cleanly.
 
 ---
 
@@ -226,7 +245,7 @@ When the user navigates away from the product page, React unmounts the component
 
 3. **Mount `<ManifestWidget context={context} />` once at your layout level**, picking the right context based on the current route (use `useLocation()`, `useParams()`, or whatever your router provides).
 
-4. **On product pages where you want the inline AI Product Specialist**, drop in `<AiProductSpecialistEmbed productId={...} settings={...} />` wherever you want it to render.
+4. **Where you want the inline AI Product Specialist**, drop in the embed. On a product page pass `productId`; on home or other pages pass `pageType="HOME"` (or whichever page type applies) and omit `productId`.
 
 That's the whole integration.
 

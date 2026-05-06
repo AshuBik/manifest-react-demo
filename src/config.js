@@ -1,4 +1,4 @@
-export const SHOP = 'test.myshopify.com';
+export const SHOP = 'kiwico.com';
 
 export const shopContext = {
   shop: SHOP,
